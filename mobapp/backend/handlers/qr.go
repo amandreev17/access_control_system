@@ -39,9 +39,9 @@ func (h *QRHandler) GenerateQRCode(c *gin.Context) {
 
 	// Generate QR data with TOTP-style time-based component
 	now := time.Now().UTC()
-	// Round to nearest 30-second interval (TOTP style)
-	interval := now.Truncate(30 * time.Second)
-	expiresAt := interval.Add(30 * time.Second)
+	// Round to nearest 10-second interval (TOTP style)
+	interval := now.Truncate(10 * time.Second)
+	expiresAt := interval.Add(10 * time.Second)
 
 	// Create the data payload
 	// Format: user_id:full_name:role:interval_timestamp:expiry_timestamp
@@ -84,7 +84,7 @@ func (h *QRHandler) GenerateQRCode(c *gin.Context) {
 		QRCode:      token,
 		Token:       token,
 		UserData:    dataPayload,
-		ExpiresIn:   30,
+		ExpiresIn:   10,
 		GeneratedAt: now.Format(time.RFC3339),
 	}
 
@@ -172,7 +172,7 @@ func (h *QRHandler) ValidateQRCode(c *gin.Context) {
 	var existingUse int
 	database.DB.QueryRow(
 		"SELECT COUNT(*) FROM access_logs WHERE qr_token = ? AND status = 'granted' AND scanned_at > ?",
-		token, time.Now().Add(-30*time.Second),
+		token, time.Now().Add(-10*time.Second),
 	).Scan(&existingUse)
 
 	if existingUse > 0 {

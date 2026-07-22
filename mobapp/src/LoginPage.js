@@ -35,8 +35,8 @@ function LoginPage() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1>СКУД</h1>
-          <p>Система контроля и управления доступом</p>
+          <h1>EnterID</h1>
+          <p>Система входа</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -71,13 +71,6 @@ function LoginPage() {
             {loading ? 'Вход...' : 'Войти'}
           </button>
         </form>
-
-        <div className="login-footer">
-          <p>Тестовые учетные записи:</p>
-          <p><strong>admin</strong> / admin123</p>
-          <p><strong>user1</strong> / user123</p>
-          <p><strong>user2</strong> / user123</p>
-        </div>
       </div>
     </div>
   );

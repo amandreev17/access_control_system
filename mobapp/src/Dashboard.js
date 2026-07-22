@@ -4,7 +4,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { qrAPI } from './api';
 import './Dashboard.css';
 
-const REFRESH_INTERVAL = 30; // seconds
+const REFRESH_INTERVAL = 10; // seconds
 
 function Dashboard() {
   const [user, setUser] = useState(null);
@@ -86,7 +86,7 @@ function Dashboard() {
     <div className="dashboard-container">
       <header className="dashboard-header">
         <div className="header-left">
-          <h1>СКУД</h1>
+          <h1>EnterID</h1>
           <span className="header-divider">|</span>
           <span className="user-name">{user.full_name}</span>
           <span className="user-role">{user.role === 'admin' ? '(Администратор)' : '(Пользователь)'}</span>
@@ -144,20 +144,8 @@ function Dashboard() {
                   <span className="info-label">Действителен:</span>
                   <span className="info-value">{REFRESH_INTERVAL} секунд</span>
                 </div>
-                <div className="info-row">
-                  <span className="info-label">Обновление:</span>
-                  <span className="info-value">автоматически каждые {REFRESH_INTERVAL} сек</span>
-                </div>
               </div>
             )}
-
-            <button
-              className="refresh-button"
-              onClick={generateQR}
-              disabled={loading}
-            >
-              {loading ? 'Обновление...' : 'Обновить QR-код'}
-            </button>
           </div>
 
           <div className="qr-token-section">
@@ -166,10 +154,6 @@ function Dashboard() {
               <div className="token-value">
                 {qrToken || '—'}
               </div>
-              <p className="token-hint">
-                Этот токен содержит RSA-подпись. Считыватель СКУД проверяет
-                подпись, срок действия и повторное использование.
-              </p>
             </div>
           </div>
         </div>

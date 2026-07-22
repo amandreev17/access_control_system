@@ -103,7 +103,7 @@ function AdminPage() {
     <div className="admin-container">
       <header className="admin-header">
         <div className="header-left">
-          <h1>СКУД</h1>
+          <h1>EnterID</h1>
           <span className="header-divider">|</span>
           <span className="user-name">{user.full_name}</span>
           <span className="user-role">(Администратор)</span>
