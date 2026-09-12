@@ -1,12 +1,28 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:8080/api';
+// Auto-detect API host:
+// 1. Environment variable (REACT_APP_API_URL) takes priority
+// 2. Otherwise use the same host that served the frontend (works on LAN)
+//    e.g. if page opened from http://192.168.0.126:3000, API = http://192.168.0.126:8080/api
+const detectApiBase = () => {
+  if (process.env.REACT_APP_API_URL || process.env.VITE_API_URL) {
+    return process.env.REACT_APP_API_URL || process.env.VITE_API_URL;
+  }
+
+  // Use the current page host (works on localhost and on LAN IP)
+  const host = window.location.hostname || 'localhost';
+  const protocol = window.location.protocol || 'http:';
+  return `${protocol}//${host}:8080/api`;
+};
+
+const API_BASE = detectApiBase();
 
 const api = axios.create({
   baseURL: API_BASE,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000,
 });
 
 // Add auth token to requests
