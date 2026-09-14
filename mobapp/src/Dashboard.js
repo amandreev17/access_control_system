@@ -4,7 +4,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { qrAPI } from './api';
 import './Dashboard.css';
 
-const REFRESH_INTERVAL = 10; // seconds
+const REFRESH_INTERVAL = 30; // seconds
 
 function Dashboard() {
   const [user, setUser] = useState(null);

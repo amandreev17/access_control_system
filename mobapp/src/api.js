@@ -9,10 +9,10 @@ const detectApiBase = () => {
     return process.env.REACT_APP_API_URL || process.env.VITE_API_URL;
   }
 
-  // Use the current page host (works on localhost and on LAN IP)
-  const host = window.location.hostname || 'localhost';
-  const protocol = window.location.protocol || 'http:';
-  return `${protocol}//${host}:8080/api`;
+  // Same origin: the HTTPS server started by serve.sh proxies /api/*
+  // to the Go backend on :8080. This avoids mixed-content blocking when the
+  // frontend is served over HTTPS and works with any host/port.
+  return `${window.location.origin}/api`;
 };
 
 const API_BASE = detectApiBase();

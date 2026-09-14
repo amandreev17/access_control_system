@@ -40,8 +40,8 @@ func (h *QRHandler) GenerateQRCode(c *gin.Context) {
 	// Generate QR data with TOTP-style time-based component
 	now := time.Now().UTC()
 	// Round to nearest 10-second interval (TOTP style)
-	interval := now.Truncate(10 * time.Second)
-	expiresAt := interval.Add(10 * time.Second)
+	interval := now.Truncate(30 * time.Second)
+	expiresAt := interval.Add(30 * time.Second)
 
 	// Create the data payload
 	// Format: user_id:full_name:role:interval_timestamp:expiry_timestamp
@@ -84,7 +84,7 @@ func (h *QRHandler) GenerateQRCode(c *gin.Context) {
 		QRCode:      token,
 		Token:       token,
 		UserData:    dataPayload,
-		ExpiresIn:   10,
+		ExpiresIn:   30,
 		GeneratedAt: now.Format(time.RFC3339),
 	}
 
@@ -168,11 +168,14 @@ func (h *QRHandler) ValidateQRCode(c *gin.Context) {
 		return
 	}
 
-	// Check if already used (within this interval)
+	// Check if already used (within this interval).
+	// ВАЖНО: scanned_at пишется SQLite как CURRENT_TIMESTAMP (UTC, формат "YYYY-MM-DD HH:MM:SS"),
+	// поэтому сравнение делаем на стороне SQLite через datetime(), а не передаём time.Time из Go
+	// (mattn/go-sqlite3 биндит локальное время с зоной, и строковое сравнение ломается).
 	var existingUse int
 	database.DB.QueryRow(
-		"SELECT COUNT(*) FROM access_logs WHERE qr_token = ? AND status = 'granted' AND scanned_at > ?",
-		token, time.Now().Add(-10*time.Second),
+		"SELECT COUNT(*) FROM access_logs WHERE qr_token = ? AND status = 'granted' AND datetime(scanned_at) > datetime('now', '-30 seconds')",
+		token,
 	).Scan(&existingUse)
 
 	if existingUse > 0 {
