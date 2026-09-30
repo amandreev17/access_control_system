@@ -6,7 +6,7 @@
 ✅ Service Worker для офлайн-работы (`src/index.js`)
 ✅ Иконки приложения (`public/logo192.png`, `public/logo512.png`)
 ✅ Мета-теги для PWA (`public/index.html`)
-✅ Скрипт для запуска сервера (`serve.sh`)
+✅ Лаунчер для запуска всего (`serve.js`; также `./serve.sh` или `npm run serve`)
 ✅ Поддержка локального IP в API (`src/api.js`)
 
 ## Как установить (3 шага)

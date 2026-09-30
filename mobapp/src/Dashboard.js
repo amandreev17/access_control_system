@@ -125,7 +125,7 @@ function Dashboard() {
                 <QRCodeSVG
                   value={qrToken}
                   size={280}
-                  level="H"
+                  level="M"
                   bgColor="#ffffff"
                   fgColor="#000000"
                 />

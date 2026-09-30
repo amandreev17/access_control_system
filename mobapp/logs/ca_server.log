@@ -1,1 +1,5 @@
 CA HTTP server on :3000
+192.168.0.118 - "GET /ca.crt" 200 - 0ms
+192.168.0.118 - "GET /ca.crt" 200 - 1ms
+192.168.0.118 - "GET /ca.crt" 200 - 2ms
+192.168.0.130 - "GET /ca.crt" 200 - 10ms

@@ -6,7 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
-	_ "github.com/mattn/go-sqlite3"
+	// Чисто-Go драйвер SQLite: не требует CGO, поэтому backend собирается
+	// на Windows без WSL/MinGW обычной командой `go build`.
+	_ "modernc.org/sqlite"
 )
 
 var DB *sql.DB
@@ -16,7 +18,7 @@ func Init() {
 	os.MkdirAll(filepath.Dir(dbPath), 0755)
 
 	var err error
-	DB, err = sql.Open("sqlite3", dbPath)
+	DB, err = sql.Open("sqlite", dbPath)
 	if err != nil {
 		log.Fatalf("Failed to open database: %v", err)
 	}
