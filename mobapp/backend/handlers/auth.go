@@ -27,9 +27,9 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	var user models.User
 	err := database.DB.QueryRow(
-		"SELECT id, username, password_hash, full_name, role, created_at, updated_at FROM users WHERE username = ?",
+		"SELECT id, username, password_hash, full_name, role, code_word, created_at, updated_at FROM users WHERE username = ?",
 		req.Username,
-	).Scan(&user.ID, &user.Username, &user.PasswordHash, &user.FullName, &user.Role, &user.CreatedAt, &user.UpdatedAt)
+	).Scan(&user.ID, &user.Username, &user.PasswordHash, &user.FullName, &user.Role, &user.CodeWord, &user.CreatedAt, &user.UpdatedAt)
 
 	if err == sql.ErrNoRows {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
@@ -62,9 +62,9 @@ func (h *AuthHandler) GetProfile(c *gin.Context) {
 
 	var user models.User
 	err := database.DB.QueryRow(
-		"SELECT id, username, password_hash, full_name, role, created_at, updated_at FROM users WHERE id = ?",
+		"SELECT id, username, password_hash, full_name, role, code_word, created_at, updated_at FROM users WHERE id = ?",
 		userID,
-	).Scan(&user.ID, &user.Username, &user.PasswordHash, &user.FullName, &user.Role, &user.CreatedAt, &user.UpdatedAt)
+	).Scan(&user.ID, &user.Username, &user.PasswordHash, &user.FullName, &user.Role, &user.CodeWord, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})

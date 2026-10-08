@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"qr-code-backend/database"
@@ -38,6 +39,7 @@ type CreateUserRequest struct {
 	Password string `json:"password" binding:"required"`
 	FullName string `json:"full_name" binding:"required"`
 	Role     string `json:"role"`
+	CodeWord string `json:"code_word"`
 }
 
 // UpdateUserRequest — запрос на обновление пользователя
@@ -45,12 +47,13 @@ type UpdateUserRequest struct {
 	Password string `json:"password,omitempty"`
 	FullName string `json:"full_name,omitempty"`
 	Role     string `json:"role,omitempty"`
+	CodeWord string `json:"code_word,omitempty"`
 }
 
 // ListUsers — возвращает список всех пользователей
 func (h *UserHandler) ListUsers(c *gin.Context) {
 	rows, err := database.DB.Query(
-		"SELECT id, username, full_name, role, created_at, updated_at FROM users ORDER BY id",
+		"SELECT id, username, full_name, role, code_word, created_at, updated_at FROM users ORDER BY id",
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка получения пользователей"})
@@ -63,6 +66,7 @@ func (h *UserHandler) ListUsers(c *gin.Context) {
 		Username  string    `json:"username"`
 		FullName  string    `json:"full_name"`
 		Role      string    `json:"role"`
+		CodeWord  string    `json:"code_word"`
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
 	}
@@ -70,7 +74,7 @@ func (h *UserHandler) ListUsers(c *gin.Context) {
 	var users []UserListItem
 	for rows.Next() {
 		var u UserListItem
-		if err := rows.Scan(&u.ID, &u.Username, &u.FullName, &u.Role, &u.CreatedAt, &u.UpdatedAt); err != nil {
+		if err := rows.Scan(&u.ID, &u.Username, &u.FullName, &u.Role, &u.CodeWord, &u.CreatedAt, &u.UpdatedAt); err != nil {
 			continue
 		}
 		users = append(users, u)
@@ -89,9 +93,9 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 
 	var user models.User
 	err = database.DB.QueryRow(
-		"SELECT id, username, password_hash, full_name, role, created_at, updated_at FROM users WHERE id = ?",
+		"SELECT id, username, password_hash, full_name, role, code_word, created_at, updated_at FROM users WHERE id = ?",
 		id,
-	).Scan(&user.ID, &user.Username, &user.PasswordHash, &user.FullName, &user.Role, &user.CreatedAt, &user.UpdatedAt)
+	).Scan(&user.ID, &user.Username, &user.PasswordHash, &user.FullName, &user.Role, &user.CodeWord, &user.CreatedAt, &user.UpdatedAt)
 
 	if err == sql.ErrNoRows {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Пользователь не найден"})
@@ -128,6 +132,12 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
+	// Кодовое слово задаёт администратор при добавлении пользователя
+	if strings.TrimSpace(req.CodeWord) == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Укажите кодовое слово"})
+		return
+	}
+
 	// Хэшируем пароль
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -136,8 +146,8 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	_, err = database.DB.Exec(
-		"INSERT INTO users (username, password_hash, full_name, role) VALUES (?, ?, ?, ?)",
-		req.Username, string(hash), req.FullName, req.Role,
+		"INSERT INTO users (username, password_hash, full_name, role, code_word) VALUES (?, ?, ?, ?, ?)",
+		req.Username, string(hash), req.FullName, req.Role, strings.TrimSpace(req.CodeWord),
 	)
 	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "Пользователь с таким логином уже существует"})
@@ -191,6 +201,9 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 			return
 		}
 		database.DB.Exec("UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", string(hash), id)
+	}
+	if strings.TrimSpace(req.CodeWord) != "" {
+		database.DB.Exec("UPDATE users SET code_word = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", strings.TrimSpace(req.CodeWord), id)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Пользователь обновлён"})

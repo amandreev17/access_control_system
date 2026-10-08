@@ -25,6 +25,7 @@ func main() {
 	authHandler := handlers.NewAuthHandler()
 	qrHandler := handlers.NewQRHandler()
 	userHandler := handlers.NewUserHandler()
+	phraseHandler := handlers.NewPhraseHandler()
 
 	// Setup Gin router
 	r := gin.Default()
@@ -33,6 +34,9 @@ func main() {
 	// Public routes
 	r.POST("/api/login", authHandler.Login)
 	r.POST("/api/validate-qr", qrHandler.ValidateQRCode)
+	// Сторонний считыватель присылает снимок кодового слова (base64)
+	// на POST /api/phrase_validate — без аутентификации, как и /api/validate-qr
+	r.POST("/api/phrase_validate", phraseHandler.ValidatePhrase)
 	r.GET("/api/public-key", qrHandler.GetPublicKey)
 
 	// Protected routes

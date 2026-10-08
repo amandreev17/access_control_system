@@ -178,3 +178,64 @@ Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-
 [GIN] 2026/09/30 - 19:31:37 | 200 |    1.200708ms |       127.0.0.1 | POST     "/api/validate-qr"
 [GIN] 2026/09/30 - 19:31:37 | 200 |     773.583µs |       127.0.0.1 | POST     "/api/validate-qr"
 [GIN] 2026/09/30 - 19:32:12 | 200 |     865.042µs |       127.0.0.1 | POST     "/api/validate-qr"
+2026/10/03 20:53:32 ECDSA P-256 keys loaded successfully
+2026/10/03 20:53:32 RSA keys loaded (legacy QR verification)
+2026/10/03 20:53:32 Migration: added column users.code_word
+2026/10/03 20:53:32 Database initialized successfully
+2026/10/03 20:53:32 Server starting on port 8080...
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /api/login                --> qr-code-backend/handlers.(*AuthHandler).Login-fm (4 handlers)
+[GIN-debug] POST   /api/validate-qr          --> qr-code-backend/handlers.(*QRHandler).ValidateQRCode-fm (4 handlers)
+[GIN-debug] GET    /api/public-key           --> qr-code-backend/handlers.(*QRHandler).GetPublicKey-fm (4 handlers)
+[GIN-debug] GET    /api/profile              --> qr-code-backend/handlers.(*AuthHandler).GetProfile-fm (5 handlers)
+[GIN-debug] POST   /api/generate-qr          --> qr-code-backend/handlers.(*QRHandler).GenerateQRCode-fm (5 handlers)
+[GIN-debug] GET    /api/access-logs          --> qr-code-backend/handlers.(*QRHandler).GetAccessLogs-fm (5 handlers)
+[GIN-debug] GET    /api/users                --> qr-code-backend/handlers.(*UserHandler).ListUsers-fm (6 handlers)
+[GIN-debug] GET    /api/users/:id            --> qr-code-backend/handlers.(*UserHandler).GetUser-fm (6 handlers)
+[GIN-debug] POST   /api/users                --> qr-code-backend/handlers.(*UserHandler).CreateUser-fm (6 handlers)
+[GIN-debug] PUT    /api/users/:id            --> qr-code-backend/handlers.(*UserHandler).UpdateUser-fm (6 handlers)
+[GIN-debug] DELETE /api/users/:id            --> qr-code-backend/handlers.(*UserHandler).DeleteUser-fm (6 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+2026/10/03 20:54:38 ECDSA P-256 keys loaded successfully
+2026/10/03 20:54:38 RSA keys loaded (legacy QR verification)
+2026/10/03 20:54:38 Database initialized successfully
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /api/login                --> qr-code-backend/handlers.(*AuthHandler).Login-fm (4 handlers)
+[GIN-debug] POST   /api/validate-qr          --> qr-code-backend/handlers.(*QRHandler).ValidateQRCode-fm (4 handlers)
+[GIN-debug] GET    /api/public-key           --> qr-code-backend/handlers.(*QRHandler).GetPublicKey-fm (4 handlers)
+[GIN-debug] GET    /api/profile              --> qr-code-backend/handlers.(*AuthHandler).GetProfile-fm (5 handlers)
+[GIN-debug] POST   /api/generate-qr          --> qr-code-backend/handlers.(*QRHandler).GenerateQRCode-fm (5 handlers)
+[GIN-debug] GET    /api/access-logs          --> qr-code-backend/handlers.(*QRHandler).GetAccessLogs-fm (5 handlers)
+[GIN-debug] GET    /api/users                --> qr-code-backend/handlers.(*UserHandler).ListUsers-fm (6 handlers)
+[GIN-debug] GET    /api/users/:id            --> qr-code-backend/handlers.(*UserHandler).GetUser-fm (6 handlers)
+[GIN-debug] POST   /api/users                --> qr-code-backend/handlers.(*UserHandler).CreateUser-fm (6 handlers)
+[GIN-debug] PUT    /api/users/:id            --> qr-code-backend/handlers.(*UserHandler).UpdateUser-fm (6 handlers)
+[GIN-debug] DELETE /api/users/:id            --> qr-code-backend/handlers.(*UserHandler).DeleteUser-fm (6 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+2026/10/03 20:54:38 Server starting on port 8080...
+[GIN] 2026/10/03 - 20:54:58 | 200 |   66.132625ms |       127.0.0.1 | POST     "/api/login"
+[GIN] 2026/10/03 - 20:54:58 | 200 |   67.642292ms |       127.0.0.1 | POST     "/api/login"
+[GIN] 2026/10/03 - 20:54:58 | 201 |      65.763ms |       127.0.0.1 | POST     "/api/users"
+[GIN] 2026/10/03 - 20:54:58 | 400 |      54.958µs |       127.0.0.1 | POST     "/api/users"
+[GIN] 2026/10/03 - 20:54:58 | 200 |     193.791µs |       127.0.0.1 | GET      "/api/users"
+[GIN] 2026/10/03 - 20:55:07 | 200 |        66.2ms |       127.0.0.1 | POST     "/api/login"
+[GIN] 2026/10/03 - 20:55:07 | 200 |     660.125µs |       127.0.0.1 | PUT      "/api/users/5"
+[GIN] 2026/10/03 - 20:55:07 | 200 |     157.125µs |       127.0.0.1 | GET      "/api/users/5"
+[GIN] 2026/10/03 - 20:55:07 | 200 |     615.625µs |       127.0.0.1 | DELETE   "/api/users/5"
+[GIN] 2026/10/03 - 20:55:07 | 200 |   65.583792ms |       127.0.0.1 | POST     "/api/login"
+[GIN] 2026/10/03 - 20:55:07 | 200 |    1.744292ms |       127.0.0.1 | POST     "/api/generate-qr"
+[GIN] 2026/10/03 - 20:55:07 | 200 |    3.871959ms |       127.0.0.1 | POST     "/api/validate-qr"

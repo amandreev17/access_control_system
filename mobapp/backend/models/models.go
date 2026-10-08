@@ -8,6 +8,7 @@ type User struct {
 	PasswordHash string    `json:"-"`
 	FullName     string    `json:"full_name"`
 	Role         string    `json:"role"`
+	CodeWord     string    `json:"code_word"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 }
@@ -61,6 +62,21 @@ type QRValidationRequest struct {
 type QRValidationResponse struct {
 	Valid    bool   `json:"valid"`
 	UserID   int    `json:"user_id,omitempty"`
+	UserName string `json:"user_name,omitempty"`
+	Message  string `json:"message"`
+}
+
+// Phrase validation request (from third-party scanner: photo of a code word).
+// Image — base64-encoded snapshot, e.g. "/9j/4AAQ..." (optionally with a
+// "data:image/jpeg;base64," prefix).
+type PhraseValidateRequest struct {
+	Image string `json:"image" binding:"required"`
+}
+
+// PhraseValidateResponse — ответ на POST /api/phrase_validate.
+// user_name возвращается только при совпадении кодового слова.
+type PhraseValidateResponse struct {
+	Valid    bool   `json:"valid"`
 	UserName string `json:"user_name,omitempty"`
 	Message  string `json:"message"`
 }

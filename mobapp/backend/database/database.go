@@ -39,6 +39,7 @@ func createTables() {
 		password_hash TEXT NOT NULL,
 		full_name TEXT NOT NULL,
 		role TEXT NOT NULL DEFAULT 'user',
+		code_word TEXT NOT NULL DEFAULT '',
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);`
@@ -78,12 +79,45 @@ func createTables() {
 		log.Fatalf("Failed to create access_logs table: %v", err)
 	}
 
+	// Миграция для баз, созданных до появления «кодового слова»
+	ensureColumn("users", "code_word", "TEXT NOT NULL DEFAULT ''")
+
 	// Seed default admin user if not exists
 	var count int
 	DB.QueryRow("SELECT COUNT(*) FROM users").Scan(&count)
 	if count == 0 {
 		seedDefaultUsers()
 	}
+}
+
+// ensureColumn добавляет колонку в существующую таблицу, если её ещё нет.
+// Нужно, чтобы новые поля (например, «кодовое слово») появлялись и в старой базе,
+// без пересоздания таблицы и потери данных.
+func ensureColumn(table, column, ddl string) {
+	rows, err := DB.Query("PRAGMA table_info(" + table + ")")
+	if err != nil {
+		log.Printf("Warning: cannot read schema of %s: %v", table, err)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var cid, notNull, pk int
+		var name, colType string
+		var dflt sql.NullString
+		if err := rows.Scan(&cid, &name, &colType, &notNull, &dflt, &pk); err != nil {
+			continue
+		}
+		if name == column {
+			return // колонка уже есть
+		}
+	}
+
+	if _, err := DB.Exec("ALTER TABLE " + table + " ADD COLUMN " + column + " " + ddl); err != nil {
+		log.Printf("Warning: cannot add column %s.%s: %v", table, column, err)
+		return
+	}
+	log.Printf("Migration: added column %s.%s", table, column)
 }
 
 func seedDefaultUsers() {
@@ -95,16 +129,17 @@ func seedDefaultUsers() {
 		passwordHash string
 		fullName     string
 		role         string
+		codeWord     string
 	}{
-		{"admin", "$2a$10$4QlSmkiL2zBUM0HX0vAuluozOKbYdVSXCGK/EuPwFqpiq5QR0bqIi", "Администратор", "admin"},
-		{"user1", "$2a$10$2697g5WnJI7lGNUzeirPd.WS9TA8EMsURM3JSXSZHKwThFxKHA1VC", "Иванов Иван", "user"},
-		{"user2", "$2a$10$2697g5WnJI7lGNUzeirPd.WS9TA8EMsURM3JSXSZHKwThFxKHA1VC", "Петров Петр", "user"},
+		{"admin", "$2a$10$4QlSmkiL2zBUM0HX0vAuluozOKbYdVSXCGK/EuPwFqpiq5QR0bqIi", "Администратор", "admin", "АЛЬФА"},
+		{"user1", "$2a$10$2697g5WnJI7lGNUzeirPd.WS9TA8EMsURM3JSXSZHKwThFxKHA1VC", "Иванов Иван", "user", "РОМАШКА"},
+		{"user2", "$2a$10$2697g5WnJI7lGNUzeirPd.WS9TA8EMsURM3JSXSZHKwThFxKHA1VC", "Петров Петр", "user", "ТОПОЛЬ"},
 	}
 
 	for _, u := range users {
 		_, err := DB.Exec(
-			"INSERT INTO users (username, password_hash, full_name, role) VALUES (?, ?, ?, ?)",
-			u.username, u.passwordHash, u.fullName, u.role,
+			"INSERT INTO users (username, password_hash, full_name, role, code_word) VALUES (?, ?, ?, ?, ?)",
+			u.username, u.passwordHash, u.fullName, u.role, u.codeWord,
 		)
 		if err != nil {
 			log.Printf("Warning: failed to seed user %s: %v", u.username, err)

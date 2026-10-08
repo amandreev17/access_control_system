@@ -11,7 +11,7 @@ function AdminPage() {
 
   // Форма создания
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ username: '', password: '', full_name: '', role: 'user' });
+  const [formData, setFormData] = useState({ username: '', password: '', full_name: '', role: 'user', code_word: '' });
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
 
@@ -70,7 +70,7 @@ function AdminPage() {
     setFormError('');
     setFormSuccess('');
 
-    if (!formData.username || !formData.password || !formData.full_name) {
+    if (!formData.username || !formData.password || !formData.full_name || !formData.code_word.trim()) {
       setFormError('Заполните все поля');
       return;
     }
@@ -82,7 +82,7 @@ function AdminPage() {
     try {
       await usersAPI.create(formData);
       setFormSuccess(`Пользователь "${formData.username}" создан`);
-      setFormData({ username: '', password: '', full_name: '', role: 'user' });
+      setFormData({ username: '', password: '', full_name: '', role: 'user', code_word: '' });
       setShowForm(false);
       loadUsers();
       setTimeout(() => setFormSuccess(''), 3000);
@@ -178,6 +178,18 @@ function AdminPage() {
                   </select>
                 </div>
               </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Кодовое слово</label>
+                  <input
+                    type="text"
+                    value={formData.code_word}
+                    onChange={e => setFormData({...formData, code_word: e.target.value})}
+                    placeholder="Например: РОМАШКА"
+                    required
+                  />
+                </div>
+              </div>
               <button type="submit" className="submit-button">Создать пользователя</button>
             </form>
           )}
@@ -190,15 +202,16 @@ function AdminPage() {
                   <th>Логин</th>
                   <th>ФИО</th>
                   <th>Роль</th>
+                  <th>Кодовое слово</th>
                   <th>Дата создания</th>
                   <th>Действия</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan="6" className="table-empty">Загрузка...</td></tr>
+                  <tr><td colSpan="7" className="table-empty">Загрузка...</td></tr>
                 ) : users.length === 0 ? (
-                  <tr><td colSpan="6" className="table-empty">Нет пользователей</td></tr>
+                  <tr><td colSpan="7" className="table-empty">Нет пользователей</td></tr>
                 ) : (
                   users.map(u => (
                     <tr key={u.id}>
@@ -210,6 +223,7 @@ function AdminPage() {
                           {u.role === 'admin' ? 'Админ' : 'Пользователь'}
                         </span>
                       </td>
+                      <td>{u.code_word || '—'}</td>
                       <td>{new Date(u.created_at).toLocaleDateString('ru-RU')}</td>
                       <td>
                         <button
